@@ -40,8 +40,7 @@ public class StatementInvocationHandler implements InvocationHandler {
                 throw e.getCause();
             } finally {
                 long duration = System.currentTimeMillis() - start;
-                String sqlToLog = (capturedSql != null) ? capturedSql : (args[0].toString());
-
+                String sqlToLog = (capturedSql != null) ? capturedSql : String.valueOf(args[0]);
                 log.log(Level.FINE, "Query: {0}. Execution time: {1} ms.", new Object[]{sqlToLog, duration});
             }
         }
