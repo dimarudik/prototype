@@ -48,6 +48,7 @@ public class ProxyJpaHikariIT {
 
         try (Connection conn = dataSource.getConnection()) {
             assertTrue(conn.isWrapperFor(Connection.class), "Connection should be wrapped by ProxyDriver");
+            assertTrue(conn.isWrapperFor(org.postgresql.PGConnection.class));
         }
 
         TestEntity entity = new TestEntity();
@@ -61,7 +62,7 @@ public class ProxyJpaHikariIT {
     @Test
     void testHikariConnectionViaProxy() throws Exception {
         assertNotNull(dataSource);
-
+        assertTrue(dataSource.getConnection().isWrapperFor(org.postgresql.PGConnection.class));
         try (Connection conn = dataSource.getConnection()) {
             assertTrue(conn.isWrapperFor(Connection.class));
             assertFalse(conn.isClosed());
