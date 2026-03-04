@@ -38,10 +38,8 @@ public class ProxyDriverIT {
 
         try (Connection conn = DriverManager.getConnection(proxyUrl, props)) {
 
-            assertNotNull(conn, "Соединение не должно быть null");
-
-            // Проверяем, что прокси корректно сообщает о себе через Wrapper
-            assertTrue(conn.isWrapperFor(Connection.class), "Соединение должно быть обернуто прокси");
+            assertNotNull(conn, "Connection should not be null");
+            assertTrue(conn.isWrapperFor(Connection.class), "Connection should be wrapped by ProxyDriver");
 
             try (Statement stmt = conn.createStatement()) {
                 ResultSet rs = stmt.executeQuery("SELECT current_database(), 123 as secret_code");

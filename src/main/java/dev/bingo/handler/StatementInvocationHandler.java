@@ -21,7 +21,6 @@ public class StatementInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         String methodName = method.getName();
 
-        // Безопасная проверка Wrapper
         if ("isWrapperFor".equals(methodName) && args != null && args.length == 1) {
             Class<?> iface = (Class<?>) args[0];
             return iface.isInstance(proxy) || target.isWrapperFor(iface);
