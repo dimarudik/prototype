@@ -45,7 +45,7 @@ public class ProxyDriver implements Driver {
         if (!acceptsURL(url)) return null;
         String realUrl = urlProvider.getURL(url);
         log.log(Level.FINE, "Real URL: {0}", realUrl);
-        properties.forEach((k, v) -> log.log(Level.FINE, "{0} = {1}", new Object[]{k, v}));
+//        properties.forEach((k, v) -> log.log(Level.FINE, "{0} = {1}", new Object[]{k, v}));
         try {
             if (!acceptsURL(realUrl)) {
                 Class.forName("org.postgresql.Driver");
@@ -55,7 +55,7 @@ public class ProxyDriver implements Driver {
                         new Class[]{Connection.class, Wrapper.class, AutoCloseable.class},
                         new ConnectionInvocationHandler(realConn));
             } else {
-                throw new SQLException("URL is not supported");
+                return null;
             }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
