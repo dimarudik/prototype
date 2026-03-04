@@ -15,9 +15,9 @@ import java.sql.Connection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = ProxyJpaHikariIT.TestApplication.class)
+@SpringBootTest(classes = ProxyJpaHikariITest.TestApplication.class)
 @Testcontainers
-public class ProxyJpaHikariIT {
+public class ProxyJpaHikariITest {
 
     @SpringBootApplication
     static class TestApplication {}

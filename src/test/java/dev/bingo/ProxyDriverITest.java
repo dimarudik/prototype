@@ -13,7 +13,7 @@ import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
-public class ProxyDriverIT {
+public class ProxyDriverITest {
 
     @Container
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres")
