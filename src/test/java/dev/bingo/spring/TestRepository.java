@@ -1,4 +1,4 @@
-package dev.bingo;
+package dev.bingo.spring;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package dev.bingo;
+package dev.bingo.core;
 
 
 import org.junit.jupiter.api.BeforeAll;
