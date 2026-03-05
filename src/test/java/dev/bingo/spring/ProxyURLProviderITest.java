@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -22,13 +23,14 @@ import java.sql.Driver;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = ProxyURLProviderITest.TestApplication.class)
+@SpringBootTest(classes = ProxyURLProviderITest.URLProviderTestApplication.class,
+        properties = "spring.main.allow-bean-definition-overriding=true")
 @Testcontainers
 @DirtiesContext
 public class ProxyURLProviderITest {
 
-    @SpringBootApplication
-    static class TestApplication {
+    @SpringBootApplication(scanBasePackages = "none")
+    static class URLProviderTestApplication {
         @Bean
         public Driver jdbcDriver(URLProvider urlProvider) {
             ProxyDriver driver = new ProxyDriver();
@@ -51,6 +53,7 @@ public class ProxyURLProviderITest {
         }
 
         @Bean
+        @Primary
         public URLProvider newURLProvider() {
             return new TestURLProvider();
         }

@@ -13,9 +13,11 @@ import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -27,7 +29,8 @@ import java.sql.Connection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = GrpcProxyITest.TestApplication.class)
+@SpringBootTest(classes = GrpcProxyITest.GrpcTestApplication.class,
+        properties = "spring.main.allow-bean-definition-overriding=true")
 @Testcontainers
 @DirtiesContext
 public class GrpcProxyITest {
@@ -49,16 +52,17 @@ public class GrpcProxyITest {
     @Autowired
     private DataSource dataSource;
 
-    @SpringBootApplication
-    static class TestApplication {
+    @SpringBootApplication(scanBasePackages = "none")
+    static class GrpcTestApplication {
 
-        @Bean
+        @Bean("grpcURLProvider")
+        @Primary
         public URLProvider grpcURLProvider() {
             return new GrpcURLProvider();
         }
 
         @Bean
-        public DataSource dataSource(URLProvider urlProvider) {
+        public DataSource dataSource(@Qualifier("grpcURLProvider")URLProvider urlProvider) {
             ProxyDriver driver = new ProxyDriver();
             driver.setUrlProvider(urlProvider);
             HikariConfig config = new HikariConfig();
@@ -85,6 +89,7 @@ public class GrpcProxyITest {
         assertNotNull(dataSource);
         try (Connection conn = dataSource.getConnection()) {
             String actualUrl = conn.getMetaData().getURL();
+            assertTrue(actualUrl.startsWith("jdbc:postgresql://localhost:"));
             assertTrue(actualUrl.contains(String.valueOf(postgres.getFirstMappedPort())));
             assertFalse(conn.isClosed());
         }

@@ -8,7 +8,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.sql.DataSource;
@@ -16,13 +15,14 @@ import java.sql.Connection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = ProxyJpaHikariITest.TestApplication.class)
+@SpringBootTest(classes = ProxyJpaHikariITest.JpaHikariTestApplication.class,
+        properties = "spring.main.allow-bean-definition-overriding=true")
 @Testcontainers
 @DirtiesContext
 public class ProxyJpaHikariITest {
 
-    @SpringBootApplication
-    static class TestApplication {}
+    @SpringBootApplication(scanBasePackages = "none")
+    static class JpaHikariTestApplication {}
 
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres");
 
