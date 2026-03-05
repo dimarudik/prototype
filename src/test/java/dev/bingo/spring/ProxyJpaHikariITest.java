@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -17,13 +18,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = ProxyJpaHikariITest.TestApplication.class)
 @Testcontainers
+@DirtiesContext
 public class ProxyJpaHikariITest {
 
     @SpringBootApplication
     static class TestApplication {}
 
-    @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres");
+
+    static {
+        postgres.start();
+    }
 
     @Autowired
     private TestRepository repository;
@@ -40,6 +45,11 @@ public class ProxyJpaHikariITest {
         registry.add("spring.datasource.driver-class-name", () -> "dev.bingo.ProxyDriver");
         registry.add("spring.jpa.show-sql", () -> "true");
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
+    }
+
+    @DynamicPropertySource
+    static void waitForContainer(DynamicPropertyRegistry registry) {
+        postgres.start();
     }
 
     @Test
