@@ -5,6 +5,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import dev.bingo.ProxyDriver;
 import dev.bingo.provider.URLProvider;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 @DirtiesContext
 public class ProxyURLProviderITest {
+
+    private static final Logger log = LoggerFactory.getLogger(ProxyURLProviderITest.class);
 
     @SpringBootApplication
     static class TestApplication {
@@ -75,6 +79,8 @@ public class ProxyURLProviderITest {
         assertNotNull(dataSource);
         assertTrue(dataSource.getConnection().isWrapperFor(org.postgresql.PGConnection.class));
         try (Connection conn = dataSource.getConnection()) {
+            String actualUrl = conn.getMetaData().getURL();
+            assertTrue(actualUrl.startsWith("jdbc:postgresql://localhost:"));
             assertTrue(conn.isWrapperFor(Connection.class));
             assertFalse(conn.isClosed());
         }
