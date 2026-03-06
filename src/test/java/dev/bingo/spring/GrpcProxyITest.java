@@ -2,11 +2,11 @@ package dev.bingo.spring;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import dev.bingo.HostProvider;
-import dev.bingo.HostServiceGrpc;
 import dev.bingo.ProxyDriver;
 import dev.bingo.provider.GrpcURLProvider;
 import dev.bingo.provider.URLProvider;
+import dev.bingo.provider.grpc.HostProvider;
+import dev.bingo.provider.grpc.HostServiceGrpc;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -75,11 +75,23 @@ public class GrpcProxyITest {
 
     static class HostServiceImpl extends HostServiceGrpc.HostServiceImplBase {
         private final String realPgAddress;
-        HostServiceImpl(String pgAddress) { this.realPgAddress = pgAddress; }
+
+        HostServiceImpl(String pgAddress) {
+            this.realPgAddress = pgAddress;
+        }
 
         @Override
         public void getHosts(HostProvider.HostRequest req, StreamObserver<HostProvider.HostResponse> responseObserver) {
-            responseObserver.onNext(HostProvider.HostResponse.newBuilder().addHosts(realPgAddress).build());
+            HostProvider.HostInfo info = HostProvider.HostInfo.newBuilder()
+                    .setHost(realPgAddress)
+                    .setType(HostProvider.HostType.MASTER)
+                    .build();
+
+            HostProvider.HostResponse response = HostProvider.HostResponse.newBuilder()
+                    .addHosts(info)
+                    .build();
+
+            responseObserver.onNext(response);
             responseObserver.onCompleted();
         }
     }

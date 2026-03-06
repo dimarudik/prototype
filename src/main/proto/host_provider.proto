@@ -1,9 +1,28 @@
 syntax = "proto3";
 package dev.bingo;
 
+option java_package = "dev.bingo.provider.grpc";
+option java_outer_classname = "HostProvider";
+
 service HostService {
   rpc GetHosts (HostRequest) returns (HostResponse);
 }
 
-message HostRequest { string original_url = 1; }
-message HostResponse { repeated string hosts = 1; }
+message HostRequest {
+  string original_url = 1;
+}
+
+enum HostType {
+  MASTER = 0;
+  SLAVE_SYNC = 1;
+  SLAVE_ASYNC = 2;
+}
+
+message HostInfo {
+  string host = 1;
+  HostType type = 2;
+}
+
+message HostResponse {
+  repeated HostInfo hosts = 1;
+}
